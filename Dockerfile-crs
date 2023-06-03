@@ -4,29 +4,18 @@ ENV DOCKER_HOST=unix:///tmp/docker.sock
 ENV DISABLE_ACCESS_LOGS=true
 ENV ACCESSLOG=/logs/access.log
 ENV ERRORLOG=/logs/error.log
-ENV RESOLVERS=0
 
 ## Install s6-overlay
-# ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-# RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
-# ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
-# RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
 COPY --from=shinsenter/s6-overlay / /
-
-# Install Forego + docker-gen
-COPY --from=nginxproxy/forego:0.17 /usr/local/bin/forego /usr/local/bin/forego
+# Install docker-gen
 COPY --from=nginxproxy/docker-gen:0.10.4 /usr/local/bin/docker-gen /usr/local/bin/docker-gen
-COPY --from=nginxproxy/nginx-proxy /app/nginx.tmpl /app/nginx.tmpl
-
-#COPY --from=nginxproxy/nginx-proxy /app/docker-entrypoint.sh /app/docker-entrypoint.sh
-# COPY --from=nginxproxy/nginx-proxy /etc/nginx/dhparam/dhparam.pem /etc/nginx/dhparam/dhparam.pem
+# Copy nginx.tmpl from nginxproxy/nginx-proxy.
+# because of https://github.com/nginx-proxy/nginx-proxy/pull/2186, using version 1.2.3
+COPY --from=nginxproxy/nginx-proxy:1.2.3 /app/nginx.tmpl /app/nginx.tmpl
 
 COPY rootfs /
-#ADD app/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN apk add --no-cache bash && \
     mkdir -p /etc/nginx/certs /logs
 WORKDIR /app
 
 ENTRYPOINT ["/init"]
-#ENTRYPOINT ["docker-entrypoint"]
-#CMD ["forego", "start", "-r"]
