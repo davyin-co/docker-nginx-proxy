@@ -1,9 +1,6 @@
 FROM owasp/modsecurity-crs:nginx-alpine
 ENV DOCKER_HOST=unix:///tmp/docker.sock
 ENV S6_OVERLAY_VERSION=3.1.5.0
-ENV HTTP_PROXY=http://192.168.168.188:7890
-ENV HTTPS_PROXY=http://192.168.168.188:7890
-ENV NO_PROXY="10.0.0.0/8,localhost,127.0.0.1,127.0.0.11,192.168.0.0/16,192.168.168.188/32,*.docker"
 ENV RESOLVERS=0
 
 ## Install s6-overlay
