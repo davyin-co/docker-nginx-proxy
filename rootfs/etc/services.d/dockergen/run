@@ -1,7 +1,9 @@
 #!/command/with-contenv bash
 
 sed -i '/{{- if $globals.Env.RESOLVERS }}/,+2d' /app/nginx.tmpl
-sed -i 's|/var/log/nginx/access.log|$globals.Env.ACCESSLOG|g' /app/nginx.tmpl
-sed -i 's|/dev/stderr|$globals.Env.ERRORLOG|g' /app/nginx.tmpl
+#sed -i 's|/var/log/nginx/access.log|$globals.Env.ACCESSLOG|g' /app/nginx.tmpl
+#sed -i 's|/dev/stderr|$globals.Env.ERRORLOG|g' /app/nginx.tmpl
+sed -i '/error_log \/dev\/stderr;/d' /app/nginx.tmpl
+sed -i '/access_log off;/d' /app/nginx.tmpl
 
 exec docker-gen -watch -notify "nginx -s reload" /app/nginx.tmpl /etc/nginx/conf.d/autogen-proxy.conf
