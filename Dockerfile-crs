@@ -4,6 +4,7 @@ ENV DOCKER_HOST=unix:///tmp/docker.sock
 ENV DISABLE_ACCESS_LOGS=true
 ENV ACCESSLOG=/logs/access.log
 ENV ERRORLOG=/logs/error.log
+ENV MODSEC_AUDIT_LOG=/logs/audit.log
 
 ## Install s6-overlay
 COPY --from=shinsenter/s6-overlay / /
