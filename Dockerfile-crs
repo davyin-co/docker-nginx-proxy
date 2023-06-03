@@ -1,0 +1,32 @@
+FROM owasp/modsecurity-crs:nginx-alpine
+ENV DOCKER_HOST=unix:///tmp/docker.sock
+ENV S6_OVERLAY_VERSION=3.1.5.0
+ENV HTTP_PROXY=http://192.168.168.188:7890
+ENV HTTPS_PROXY=http://192.168.168.188:7890
+ENV NO_PROXY="10.0.0.0/8,localhost,127.0.0.1,127.0.0.11,192.168.0.0/16,192.168.168.188/32,*.docker"
+ENV RESOLVERS=0
+
+## Install s6-overlay
+# ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
+# RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
+# ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
+# RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
+COPY --from=shinsenter/s6-overlay / /
+
+# Install Forego + docker-gen
+COPY --from=nginxproxy/forego:0.17 /usr/local/bin/forego /usr/local/bin/forego
+COPY --from=nginxproxy/docker-gen:0.10.4 /usr/local/bin/docker-gen /usr/local/bin/docker-gen
+COPY --from=nginxproxy/nginx-proxy /app/nginx.tmpl /app/nginx.tmpl
+
+#COPY --from=nginxproxy/nginx-proxy /app/docker-entrypoint.sh /app/docker-entrypoint.sh
+# COPY --from=nginxproxy/nginx-proxy /etc/nginx/dhparam/dhparam.pem /etc/nginx/dhparam/dhparam.pem
+
+COPY rootfs /
+#ADD app/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+RUN apk add --no-cache bash && \
+    mkdir -p /etc/nginx/certs 
+WORKDIR /app
+
+ENTRYPOINT ["/init"]
+#ENTRYPOINT ["docker-entrypoint"]
+#CMD ["forego", "start", "-r"]

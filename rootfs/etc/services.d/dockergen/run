@@ -1,0 +1,5 @@
+#!/command/with-contenv bash
+
+sed -i '/{{- if $globals.Env.RESOLVERS }}/,+2d' /app/nginx.tmpl
+
+exec docker-gen -watch -notify "nginx -s reload" /app/nginx.tmpl /etc/nginx/conf.d/autogen-proxy.conf

@@ -38,3 +38,13 @@ jobs:
         platforms: linux/amd64,linux/arm64
         file: Dockerfile
         tags: davyinsa/nginx-proxy
+    -
+      name: Build and push CRS
+      id: docker_build_crs
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        context: .
+        platforms: linux/amd64,linux/arm64
+        file: Dockerfile-crs
+        tags: davyinsa/nginx-proxy:crs
