@@ -13,6 +13,8 @@ COPY --from=nginxproxy/docker-gen:0.10.4 /usr/local/bin/docker-gen /usr/local/bi
 # Copy nginx.tmpl from nginxproxy/nginx-proxy.
 # because of https://github.com/nginx-proxy/nginx-proxy/pull/2186, using version 1.2.3
 COPY --from=nginxproxy/nginx-proxy:1.2.3 /app/nginx.tmpl /app/nginx.tmpl
+# enable gzip by default
+ADD https://raw.githubusercontent.com/h5bp/server-configs-nginx/main/h5bp/web_performance/compression.conf /etc/nginx/conf.d/compression-gzip.conf
 
 COPY rootfs /
 RUN apk add --no-cache bash && \
