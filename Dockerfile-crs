@@ -6,6 +6,8 @@ ENV ACCESSLOG=/logs/access.log
 ENV ERRORLOG=/logs/error.log
 ENV MODSEC_AUDIT_LOG=/logs/audit.log
 
+USER root
+
 ## Install s6-overlay
 COPY --from=shinsenter/s6-overlay / /
 # Install docker-gen
