@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error | 服务器错误</title>
+    <style>
+        :root {
+            --primary-color: #dc3545;
+            --secondary-color: #f8f9fa;
+            --dark-color: #343a40;
+            --transition-speed: 0.3s;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: var(--secondary-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+        .lang-switcher {
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+        .lang-btn {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity var(--transition-speed);
+        }
+        .lang-btn:hover {
+            opacity: 1;
+        }
+        .lang-btn.active {
+            opacity: 1;
+            font-weight: bold;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .error-icon {
+            font-size: 5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        .error-details {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background var(--transition-speed);
+        }
+        .btn:hover {
+            background: #c82333;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .lang-content {
+            display: none;
+        }
+        .lang-content.active {
+            display: block;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .actions {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="zh">中文</button>
+            <button class="lang-btn" data-lang="en">English</button>
+        </div>
+
+        <div class="lang-content active" id="zh-content">
+            <header>
+                <div class="error-icon">⚠️</div>
+                <h1>服务器遇到错误</h1>
+                <p>抱歉，服务器处理您的请求时出现问题</p>
+            </header>
+
+            <div class="error-details">
+                <h2>发生了什么？</h2>
+                <p>我们的服务器返回了 <strong>5XX 系列错误</strong>，这通常表示服务器端出现了问题。</p>
+                
+                <h2>您可以尝试：</h2>
+                <ul>
+                    <li>稍后刷新页面</li>
+                    <li>检查您输入的信息是否正确</li>
+                    <li>如果问题持续存在，请联系网站管理员</li>
+                </ul>
+            </div>
+
+            <div class="actions">
+                <a href="/" class="btn">返回首页</a>
+                <a href="javascript:location.reload()" class="btn">刷新页面</a>
+                <a href="mailto:admin@example.com" class="btn">联系管理员</a>
+            </div>
+        </div>
+
+        <div class="lang-content" id="en-content">
+            <header>
+                <div class="error-icon">⚠️</div>
+                <h1>Server Error</h1>
+                <p>Sorry, there was a problem processing your request</p>
+            </header>
+
+            <div class="error-details">
+                <h2>What happened?</h2>
+                <p>Our server returned a <strong>5XX error</strong>, which usually indicates a server-side issue.</p>
+                
+                <h2>You can try:</h2>
+                <ul>
+                    <li>Refresh the page later</li>
+                    <li>Check if your input is correct</li>
+                    <li>Contact the administrator if the problem persists</li>
+                </ul>
+            </div>
+
+            <div class="actions">
+                <a href="/" class="btn">Homepage</a>
+                <a href="javascript:location.reload()" class="btn">Refresh</a>
+                <a href="mailto:admin@example.com" class="btn">Contact Admin</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p id="error-code">错误代码: 5XX | 服务器时间: <span id="server-time"></span></p>
+    </footer>
+
+    <script>
+        // 语言切换功能
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 更新按钮状态
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 切换内容显示
+                const lang = this.dataset.lang;
+                document.querySelectorAll('.lang-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${lang}-content`).classList.add('active');
+                
+                // 更新页脚信息
+                updateFooter(lang);
+            });
+        });
+
+        // 显示当前服务器时间
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('server-time').textContent = now.toLocaleString();
+        }
+        
+        // 根据语言更新页脚
+        function updateFooter(lang) {
+            const footerText = {
+                'zh': `错误代码: 5XX | 服务器时间: ${new Date().toLocaleString()}`,
+                'en': `Error Code: 5XX | Server Time: ${new Date().toLocaleString('en-US')}`
+            };
+            document.getElementById('error-code').innerHTML = footerText[lang] || footerText['zh'];
+        }
+
+        // 初始化
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // 错误跟踪
+        console.error('5XX Server Error at:', new Date().toISOString());
+        
+        // 根据浏览器语言自动切换
+        const userLang = navigator.language.startsWith('zh') ? 'zh' : 'en';
+        if (userLang === 'en') {
+            document.querySelector('.lang-btn[data-lang="en"]').click();
+        }
+    </script>
+</body>
+</html>
