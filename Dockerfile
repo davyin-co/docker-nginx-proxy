@@ -5,7 +5,7 @@ ENV GEOIP2_VERSION=3.4
 # 安装编译依赖并编译 GeoIP2 模块
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    libpcre3-dev \
+    libpcre2-dev \
     zlib1g-dev \
     libgeoip-dev \
     libmaxminddb-dev \
@@ -37,4 +37,5 @@ RUN apt-get update \
 
 COPY rootfs/etc/nginx/conf.d/my_proxy.conf /etc/nginx/conf.d/my_proxy.conf
 COPY rootfs/etc/nginx/conf.d/geoip2.conf /etc/nginx/conf.d/geoip2.conf
+COPY rootfs/usr/share/nginx/html/errors/ /usr/share/nginx/html/errors/
 ADD https://raw.githubusercontent.com/h5bp/server-configs-nginx/main/h5bp/web_performance/compression.conf /etc/nginx/conf.d/compression-gzip.conf
