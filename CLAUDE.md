@@ -97,3 +97,7 @@ docker run --rm davyinsa/nginx-proxy cat /etc/nginx/nginx.conf | head -20
 - `rootfs/etc/services.d/dockergen/run` 中的 `sed` 修补**硬编码**针对 nginx-proxy 1.2.3 的 `nginx.tmpl`；上游该文件结构变更时这些 sed 表达式需要更新。
 - 修改 `Dockerfile` 后务必本地构建一次再 push：CI 失败会导致多架构镜像不一致。
 - `ssl/` 和 `vhost/` 目录在仓库里是空的占位符，运行时由用户挂载，不要把证书提交进仓库。
+- **基础镜像升级到 Debian trixie 时**：`libpcre3-dev` 已不可用，必须用 `libpcre2-dev`（上游 nginx 已完成 PCRE → PCRE2 迁移）。如果未来基础镜像再升级，注意同步检查编译依赖。
+- **GeoIP2 引入大量 nginx 变量**：`my_proxy.conf` 必须设置 `variables_hash_max_size 2048` + `variables_hash_bucket_size 128`，否则启动时会持续报 `could not build optimal variables_hash` 警告。
+- **5XX 自定义错误页路径必须存在**：`Dockerfile` 中有 `COPY rootfs/usr/share/nginx/html/errors/ /usr/share/nginx/html/errors/`。修改 `rootfs/.../errors/50x.html` 后**必须重新构建镜像**才会生效——这个文件之前曾因 COPY 缺失而在镜像里不存在，是个真实踩过的坑。
+- **5XX 错误页只在 default_server 生效**：上游 `default.conf` 已在 line 104 配置 `error_page 500 502 503 504 /50x.html;`（root 是 `/usr/share/nginx/html/errors`），自定义 vhost 如果想用同一错误页，需要在自己的 server 块里复制这两行配置。
