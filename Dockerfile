@@ -1,6 +1,7 @@
 FROM nginxproxy/nginx-proxy AS builder
 
 ENV GEOIP2_VERSION=3.4
+ENV SERVER_TOKENS=off
 
 # 安装编译依赖并编译 GeoIP2 模块
 RUN apt-get update && apt-get install -y --no-install-recommends \
