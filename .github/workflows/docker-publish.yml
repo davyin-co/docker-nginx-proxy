@@ -15,13 +15,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
+      uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v3
     - name: Login to DockerHub
-      uses: docker/login-action@v1 
+      uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -33,7 +33,7 @@ jobs:
         password: ${{ secrets.ALIYUNCR_PASSWORD }}
     - name: Build and push
       id: docker_build
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v6
       with:
         push: true
         context: .
@@ -42,7 +42,7 @@ jobs:
         tags: davyinsa/nginx-proxy
     - name: Build and push CRS
       id: docker_build_crs
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v6
       with:
         push: true
         context: .
@@ -51,7 +51,7 @@ jobs:
         tags: davyinsa/nginx-proxy:crs
     - name: Build and push to ALIYUN CR
       id: docker_build_to_aliyun
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v6
       with:
         push: true
         context: .
@@ -60,7 +60,7 @@ jobs:
         tags: registry.cn-hangzhou.aliyuncs.com/davyin/nginx-proxy
     - name: Build and push CRS to ALIYUN CR
       id: docker_build_crs_to_aliyun
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v6
       with:
         push: true
         context: .
